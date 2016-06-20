@@ -31,3 +31,6 @@ for i in range(26):
     copy.blit(number, (TILE_WIDTH-nSize[0]-2, TILE_WIDTH-nSize[1]))
     for i in range(letterCountMap[l]):
         SCRABBLE_TILES.append(copy.copy())
+
+SCRABBLE_TILES.append(_tileBase.copy())
+SCRABBLE_TILES.append(_tileBase.copy())
