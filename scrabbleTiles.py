@@ -1,5 +1,25 @@
 import pygame, random
 
+class ScrabbleTile:
+
+    def __init__(self, letter):
+        self.letter = letter
+        self.value = letterValueMap[letter]
+
+        copy = _tileBase.copy()
+        l = letterFont.render(letter, False, (0, 0, 0))
+        number = numberFont.render(str(letterValueMap[letter]), False, (0, 0, 0))
+        size = l.get_size()
+        nSize = number.get_size()
+        copy.blit(l, (TILE_WIDTH/2-size[0]/2, TILE_WIDTH/2 - size[1]/2))
+        if self.value > 0:
+            copy.blit(number, (TILE_WIDTH-nSize[0]-2, TILE_WIDTH-nSize[1]))
+
+        self.tile = copy
+
+    def copy(self):
+        return ScrabbleTile(self.letter)
+
 TILE_WIDTH = 40
 
 _tileBase = pygame.image.load("tile.png");
@@ -21,16 +41,9 @@ letterCountMap = {"A":9, "B":2, "C":2, "D":4, "E":12, "F":2, "G":3,
                   "V":2, "W":2, "X":1, "Y":2, "Z":1, " ":2}
 
 for i in range(26):
-    copy = _tileBase.copy()
     l = chr(ord("A")+i)
-    letter = letterFont.render(l, False, (0, 0, 0))
-    number = numberFont.render(str(letterValueMap[l]), False, (0, 0, 0))
-    size = letter.get_size()
-    nSize = number.get_size()
-    copy.blit(letter, (TILE_WIDTH/2-size[0]/2, TILE_WIDTH/2 - size[1]/2))
-    copy.blit(number, (TILE_WIDTH-nSize[0]-2, TILE_WIDTH-nSize[1]))
     for i in range(letterCountMap[l]):
-        SCRABBLE_TILES.append(copy.copy())
+        SCRABBLE_TILES.append(ScrabbleTile(l))
 
-SCRABBLE_TILES.append(_tileBase.copy())
-SCRABBLE_TILES.append(_tileBase.copy())
+SCRABBLE_TILES.append(ScrabbleTile(" "))
+SCRABBLE_TILES.append(ScrabbleTile(" "))
