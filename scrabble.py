@@ -1,5 +1,6 @@
 import scrabbleBoard as board
 import scrabbleTiles as tiles
+import scrabblePlayer as player
 import pygame, sys, random
 
 TILE_WIDTH = board.TILE_WIDTH
@@ -9,6 +10,8 @@ BOARD_BOTTOM_MARGIN = 3
 
 def main():
     pygame.init()
+
+    player1 = player.Player()
 
     WIDTH = TILE_WIDTH*15
     HEIGHT = TILE_WIDTH*15 + TILE_WIDTH + BOARD_BOTTOM_MARGIN
@@ -20,21 +23,20 @@ def main():
     SELECTOR.convert_alpha()
     WINDOW.blit(SELECTOR, (0, 0))
 
-    hand = []
     boardData = board.board_data
 
-    for i in range(7):
+    for i in range(10):
         value = random.choice(tiles.SCRABBLE_TILES)
         tiles.SCRABBLE_TILES.remove(value)
-        hand.append(value)
+        player1.hand.append(value)
     
     for i in range(len(tiles.SCRABBLE_TILES)):
         WINDOW.blit(tiles.SCRABBLE_TILES[i].tile, (TILE_WIDTH*(i%15), TILE_WIDTH*(i//15)))
         boardData[(i%15)][(i//15)] = tiles.SCRABBLE_TILES[i].tile
 
-    startX = WINDOW.get_size()[0]/2 - len(hand)*TILE_WIDTH/2
-    for i in range(len(hand)):
-        tile = hand[i].tile
+    startX = WINDOW.get_size()[0]/2 - len(player1.hand)*TILE_WIDTH/2
+    for i in range(len(player1.hand)):
+        tile = player1.hand[i].tile
         WINDOW.blit(tile, (startX+TILE_WIDTH*i, TILE_WIDTH*15 + BOARD_BOTTOM_MARGIN))
 
     pygame.display.update()
