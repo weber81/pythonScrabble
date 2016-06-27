@@ -7,6 +7,7 @@ TILE_WIDTH = board.TILE_WIDTH
 SELECTOR = board.SELECTOR
 
 BOARD_BOTTOM_MARGIN = 3
+HAND_SIZE = 7
 
 def main():
     pygame.init()
@@ -25,7 +26,7 @@ def main():
 
     boardData = board.board_data
 
-    for i in range(10):
+    for i in range(HAND_SIZE):
         value = random.choice(tiles.SCRABBLE_TILES)
         tiles.SCRABBLE_TILES.remove(value)
         player1.hand.append(value)
@@ -63,8 +64,11 @@ def main():
                 board.drawSelector(WINDOW, selectedPos, selectedHorizontal)
                 pygame.display.update()
             if event.type == pygame.KEYUP:
+                if event.key == pygame.K_F5:
+                    player1.shuffleHand(pygame, WINDOW, (startX, TILE_WIDTH*15 + BOARD_BOTTOM_MARGIN), TILE_WIDTH)
+                    continue
                 if selectedPos and selectedPos[0] < 15 and selectedPos[1] < 15:
-                    for card in hand:
+                    for card in player1.hand:
                         if card.letter == chr(event.key).upper():
                             boardData[selectedPos[0]][selectedPos[1]] = card.tile
                             board.drawBoard(WINDOW, board.getBlankBoard(), boardData)
@@ -75,6 +79,7 @@ def main():
                             board.drawSelector(WINDOW, selectedPos, selectedHorizontal)
                             pygame.display.update()
                             break
+                
                 
 """def fontTest():
     pygame.init()

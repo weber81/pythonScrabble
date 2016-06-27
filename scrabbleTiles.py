@@ -20,6 +20,9 @@ class ScrabbleTile:
     def copy(self):
         return ScrabbleTile(self.letter)
 
+    def __repr__(self):
+        return self.letter
+
 TILE_WIDTH = 40
 
 _tileBase = pygame.image.load("tile.png");
