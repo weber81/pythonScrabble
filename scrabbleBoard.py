@@ -9,8 +9,6 @@ TILE_WIDTH = 40
     d -> double letter
     s -> start"""
 
-SELECTOR = pygame.image.load("selector.png")
-
 def getTiles():
     images = {}
     images.update({"e": pygame.image.load("empty.png")})
@@ -47,7 +45,6 @@ def drawBoard(WINDOW, board=board_data):
                 image = board[x][y]
             WINDOW.blit(image, (TILE_WIDTH*x, TILE_WIDTH*y))
 
-def drawSelector(WINDOW, pos, horizontal):
-    if pos[0] < len(BLANK_BOARD) and pos[1] < len(BLANK_BOARD):
-        WINDOW.blit(pygame.transform.rotate(SELECTOR, 0 if horizontal else -90),
-                    (TILE_WIDTH*pos[0], TILE_WIDTH*pos[1]))
+def clearData():
+    global board_data
+    board_data = [[None for i in range(len(BLANK_BOARD[j]))] for j in range(len(BLANK_BOARD))]

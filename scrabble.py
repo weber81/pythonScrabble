@@ -15,6 +15,9 @@ pixelToTile=lambda x: x//TILE_WIDTH
 def main():
     pygame.init()
 
+    board.clearData()
+    tiles.SCRABBLE_TILES = tiles.makeScrabbleBag()
+
     selector = Selector.Selector()
     player1 = player.Player()
 
