@@ -6,7 +6,7 @@ class Player:
     def setHand(self, hand):
         self.hand = hand
 
-    def giveTiles(self, tiles):
+    def drawTiles(self, tiles):
         self.hand += tiles
 
     def playTile(self, tile):
