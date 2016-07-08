@@ -1,28 +1,29 @@
 import scrabbleBoard as board
 import scrabbleTiles as tiles
 import scrabblePlayer as player
+import selector as Selector
 import pygame, sys, random
 
 TILE_WIDTH = board.TILE_WIDTH
-SELECTOR = board.SELECTOR
 
 BOARD_BOTTOM_MARGIN = 3
 HAND_SIZE = 7
 
+tileToPixel=lambda x: x*TILE_WIDTH
+pixelToTile=lambda x: x//TILE_WIDTH
+
 def main():
     pygame.init()
 
+    selector = Selector.Selector()
     player1 = player.Player()
 
-    WIDTH = TILE_WIDTH*15
-    HEIGHT = TILE_WIDTH*15 + TILE_WIDTH + BOARD_BOTTOM_MARGIN
+    WIDTH = tileToPixel(15)
+    HEIGHT = tileToPixel(15) + TILE_WIDTH + BOARD_BOTTOM_MARGIN
 
     WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    board.drawBoard(WINDOW, board.getBlankBoard())
-    SELECTOR = pygame.image.load("selector.png")
-    SELECTOR.convert_alpha()
-    WINDOW.blit(SELECTOR, (0, 0))
+    board.drawBoard(WINDOW)
 
     boardData = board.board_data
 
@@ -36,47 +37,44 @@ def main():
         boardData[(i%15)][(i//15)] = tiles.SCRABBLE_TILES[i].tile
 
     startX = WINDOW.get_size()[0]/2 - len(player1.hand)*TILE_WIDTH/2
-    for i in range(len(player1.hand)):
-        tile = player1.hand[i].tile
-        WINDOW.blit(tile, (startX+TILE_WIDTH*i, TILE_WIDTH*15 + BOARD_BOTTOM_MARGIN))
-
+    
+    player1.displayHand(pygame, WINDOW, (startX, TILE_WIDTH*15+BOARD_BOTTOM_MARGIN))
     pygame.display.update()
 
-    selectedPos = None
-    selectedHorizontal = True
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if selectedPos == (event.pos[0]//TILE_WIDTH, event.pos[1]//TILE_WIDTH):
-                    selectedHorizontal = not selectedHorizontal
-                    if selectedHorizontal == True:
-                        board.drawBoard(WINDOW, board.getBlankBoard(), boardData)
-                        pygame.display.update()
-                        selectedPos = None
-                        continue
-                else:
-                    selectedHorizontal = True
-                selectedPos = (event.pos[0]//TILE_WIDTH, event.pos[1]//TILE_WIDTH)
-                board.drawBoard(WINDOW, board.getBlankBoard(), boardData)
-                board.drawSelector(WINDOW, selectedPos, selectedHorizontal)
+                pos = pixelToTile(event.pos[0]), pixelToTile(event.pos[1])
+
+                if (pos[0] < len(board.BLANK_BOARD)
+                        and pos[1] < len(board.BLANK_BOARD)):
+                    selector.setPos(pos)
+                    selector.nextState()
+                    
+                board.drawBoard(WINDOW, boardData)
+                selector.draw(WINDOW, tileToPixel)
                 pygame.display.update()
+                
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_F5:
                     player1.shuffleHand(pygame, WINDOW, (startX, TILE_WIDTH*15 + BOARD_BOTTOM_MARGIN), TILE_WIDTH)
                     continue
-                if selectedPos and selectedPos[0] < 15 and selectedPos[1] < 15:
+
+                if selector.selected() and selector.pos[0] < 15 and selector.pos[1] < 15:
                     for card in player1.hand:
                         if card.letter == chr(event.key).upper():
-                            boardData[selectedPos[0]][selectedPos[1]] = card.tile
-                            board.drawBoard(WINDOW, board.getBlankBoard(), boardData)
-                            if selectedHorizontal:
-                                selectedPos = (selectedPos[0] + 1, selectedPos[1])
-                            else:
-                                selectedPos = (selectedPos[0], selectedPos[1]+1)
-                            board.drawSelector(WINDOW, selectedPos, selectedHorizontal)
+                            pos = selector.pos
+                            boardData[pos[0]][pos[1]] = card.tile
+
+                            board.drawBoard(WINDOW, boardData)
+                            selector.move()
+                            selector.draw(WINDOW, tileToPixel)
+
+                            player1.playTile(card)
+                            player1.displayHand(pygame, WINDOW, (startX, TILE_WIDTH*15+BOARD_BOTTOM_MARGIN))
                             pygame.display.update()
                             break
                 

@@ -10,7 +10,7 @@ class Player:
         self.hand += tiles
 
     def playTile(self, tile):
-        if tile not in hand:
+        if tile not in self.hand:
             return False
         self.hand.remove(tile)
         self.inPlay.append(tile)
@@ -21,6 +21,13 @@ class Player:
 
     def undo(self):
         self.hand.append(self.inPlay.pop())
+
+    def displayHand(self, pygame, WINDOW, startPos):
+        for i in range(len(self.hand)):
+            tile = self.hand[i].tile
+            WINDOW.blit(tile, (startPos[0]+tile.get_width()*i,
+                               startPos[1]))
+
 
     def shuffleHand(self, pygame, WINDOW, startPos, tileWidth):
         import random
